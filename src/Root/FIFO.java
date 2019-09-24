@@ -43,6 +43,13 @@ public class FIFO <E> implements DanMethods <E>{
    public void grow(){
       //Does nothing
    }
+
+   public E get(int i){
+      if(first == null || i < 0){
+         return null;
+      }
+      return (E) first.get(i);
+   }
 }
 
 //Used for FIFO

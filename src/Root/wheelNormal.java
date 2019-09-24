@@ -1,14 +1,22 @@
 package Root;
 
 public class wheelNormal implements WheelInterface {
+    private String name;
+    private int productiontime;
+
+    public wheelNormal(String name, int productiontime){
+        this.name = name;
+        this.productiontime = productiontime;
+    }
+
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
     public int getProductionTime() {
-        return 0;
+        return productiontime;
     }
 
     @Override

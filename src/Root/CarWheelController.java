@@ -9,11 +9,12 @@ public class CarWheelController implements ControllerInterface {
 
     public CarWheelController(CarWheelService service){
         this.service = service;
-        menuItems = new MenuItem[4];
-        menuItems[0]= new MenuItem("Add job",location + "add");
-        menuItems[1]= new MenuItem("Clear jobs",location + "clear");
-        menuItems[2]= new MenuItem("Stop belt",location + "stop");
-        menuItems[3]= new MenuItem("Tilbage","/");
+        menuItems = new MenuItem[5];
+        menuItems[0]= new MenuItem("Display job queue",location + "display");
+        menuItems[1]= new MenuItem("Add job",location + "add");
+        menuItems[2]= new MenuItem("Clear jobs",location + "clear");
+        menuItems[3]= new MenuItem("Start/Stop belt",location + "startstop");
+        menuItems[4]= new MenuItem("Tilbage","/");
         controller = new MenuItem(name,location);
     }
 
@@ -31,12 +32,14 @@ public class CarWheelController implements ControllerInterface {
             if(_location.length() > location.length() && _location.startsWith(location)) {
                 String subpath = _location.substring(location.length());
                 switch (subpath) {
+                    case "display":
+                        return get_display();
                     case "add":
-                        return new Page(menuItems, null, get_add());
+                        return get_add();
                     case "clear":
-                        return new Page(menuItems, null, get_clear());
-                    case "stop":
-                        return new Page(menuItems, null, get_stop());
+                        return get_clear();
+                    case "startstop":
+                        return get_stop();
                     default:
                         break;
                 }
@@ -57,9 +60,7 @@ public class CarWheelController implements ControllerInterface {
             switch (subpath) {
                 case "post_add":
                     return post_add(form);
-                case "post_clear":
-                    return post_clear(form);
-                case "post_stop":
+                case "post_startstop":
                     return post_stop(form);
                 default:
                     break;
@@ -87,60 +88,72 @@ public class CarWheelController implements ControllerInterface {
     }
 
 
-    private Form get_add(){
-        return null;
+    private Page get_display(){
+        FIFO<WheelInterface> jq = service.getQueue();
+        String[] rstr = new String[jq.size()+3];
+        rstr[0] = "\n";
+        if(jq.size() == 0){
+            rstr[1] = "The job queue is empty";
+        }
+        else{
+            rstr[1] = "Dispalying jobs in order they will be produced";
+        }
+        for(int i = 0; i < jq.size(); i++){
+            rstr[i+2] = i + ": " + jq.get(i).getName();
+        }
+        rstr[rstr.length - 1] = "\n";
+        return new Page(menuItems, rstr, null);
+    }
+
+    private Page get_add(){
+        WheelInterface[] wheels = service.getWheels();
+        String[] wheelsinfo = new String[wheels.length];
+        for(int i = 0; i < wheels.length; i++){
+            wheelsinfo[i] = i + ": " + wheels[i].getName();
+        }
+        Question[] q = new Question[2];
+        q[0] = new Question("Select wheel to produce");
+        q[1] = new Question("Enter amount");
+        return new Page(menuItems, wheelsinfo, new Form(q, location + "post_add"));
     }
 
     private String[] post_add(Form form){
-        /*
-        String[] result = new String[1];
-        result[0] = "Der er sket en fejl brugerne er ikke oprettet.";
+        String[] rstr = new String[1];
+        rstr[0] = "An error occured";
         Question[] q = form.getQuestions();
-        if(q.length == 1){
-            service.create(q[0].getAnswer());
-            result[0] = "Brugeren er oprettet";
+        if(q.length == 2){
+            try{
+                WheelInterface[] wheels = service.getWheels();
+                //The wheel number
+                WheelInterface wheel = wheels[Integer.parseInt(q[0].getAnswer())];
+                //The amount of wheels to produce
+                int numwheels = Integer.parseInt(q[1].getAnswer());
+                service.add(wheel, numwheels);
+                rstr[0] = "Added " + numwheels + " of type " + wheel.getName() + " to production queue.";
+            }catch(Exception e){
+                rstr[0] = "An error occured";
+            }
+
         }
-
-        return result;
-        */
-        return null;
+        return rstr;
     }
 
-    private Form get_clear(){
-        return null;
+    private Page get_clear(){
+        FIFO<WheelInterface> jq = service.getQueue();
+        String[] rstr = new String[2];
+        rstr[0] = "\n";
+        rstr[1] = "Removed " + jq.size() + " elements from job queue.";
+        service.clear();
+        return new Page(menuItems, rstr, null);
     }
 
-    private String[] post_clear(Form form){
-        /*
-        String[] result = new String[1];
-        result[0] = "Der er sket en fejl brugerne er ikke oprettet.";
-        Question[] q = form.getQuestions();
-        if(q.length == 1){
-            service.create(q[0].getAnswer());
-            result[0] = "Brugeren er oprettet";
-        }
 
-        return result;
-        */
-        return null;
-    }
 
-    private Form get_stop(){
+    private Page get_stop(){
         return null;
     }
 
     private String[] post_stop(Form form){
-        /*
-        String[] result = new String[1];
-        result[0] = "Der er sket en fejl brugerne er ikke oprettet.";
-        Question[] q = form.getQuestions();
-        if(q.length == 1){
-            service.create(q[0].getAnswer());
-            result[0] = "Brugeren er oprettet";
-        }
-
-        return result;
-        */
         return null;
     }
 
