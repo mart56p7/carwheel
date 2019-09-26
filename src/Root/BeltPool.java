@@ -26,6 +26,7 @@ public class BeltPool implements Runnable, Threadhandler{
         for(int i = 0; i < waitingBelts.length; i++){
             if(waitingBelts[i] == null){
                 waitingBelts[i] = belt;
+                notify();
                 return true;
             }
         }
@@ -67,7 +68,16 @@ public class BeltPool implements Runnable, Threadhandler{
                         waitingBelts[i] = null;
                     }
                 }
+            } else {
+                try {
+                    synchronized (this) {
+                        wait(1000);
+                    }
+                } catch (InterruptedException e) {
+
+                }
             }
+
         }
     }
 }

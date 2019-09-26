@@ -11,7 +11,7 @@ public class ProgramRoot {
         wheels[3] = new wheelWinter("Mother fucker big wheel", 200000);
         //Vores kø hvor de forskellige hjul opbevares indtil de bliver produceret
         FIFO<WheelInterface> resourcequeue = new FIFO();
-        //Opretter en Beltpool til vores service
+        //Opretter en BeltPool til vores service
         Threadhandler pool = new BeltPool(resourcequeue, 4);
         //Vores Controller til vores cmd interface
         ControllerInterface[] controllers = new ControllerInterface[1];
