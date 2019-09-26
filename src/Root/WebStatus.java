@@ -13,9 +13,16 @@ public class  WebStatus extends Thread{
     private volatile FIFO<WheelInterface> resqueue;
     private volatile WheelInterface[] wheels;
     ServerSocket serverConnect;
-    public WebStatus(FIFO<WheelInterface> resqueue, WheelInterface[] wheels){
+    private boolean debug = false;
+
+    public WebStatus(FIFO<WheelInterface> resqueue, WheelInterface[] wheels) {
+        this(resqueue, wheels, false);
+    }
+
+    public WebStatus(FIFO<WheelInterface> resqueue, WheelInterface[] wheels, boolean debug){
         this.resqueue = resqueue;
         this.wheels = wheels;
+        this.debug = debug;
         //We listen on port 80 (normal webserver port)
         try
         {
@@ -23,7 +30,7 @@ public class  WebStatus extends Thread{
         }
         catch (IOException e)
         {
-            System.err.println("Server Connection error : " + e.getMessage());
+            if(debug) System.err.println("Server Connection error : " + e.getMessage());
         }
     }
 
@@ -34,18 +41,18 @@ public class  WebStatus extends Thread{
             try
             {
                 WebServer myServer = new WebServer(serverConnect.accept(), resqueue, wheels);
-                System.out.println("Connecton opened. (" + new Date() + ")");
+                if(debug) System.out.println("Connecton opened. (" + new Date() + ")");
                 // create a dedicated thread to manage the client connection
                 Thread thread = new Thread(myServer);
                 thread.start();
             }
             catch (IOException e)
             {
-                System.err.println("Server Connection error : " + e.getMessage());
+                if(debug) System.err.println("Server Connection error : " + e.getMessage());
             }
 
         }
-        System.out.println("webstatus has closed down!");
+        if(debug) System.out.println("webstatus has closed down!");
     }
 
     public void close(){
@@ -56,7 +63,7 @@ public class  WebStatus extends Thread{
         }
         catch (IOException e)
         {
-            System.err.println("Server Connection error : " + e.getMessage());
+            if(debug) System.err.println("Server Connection error : " + e.getMessage());
         }
     }
 
@@ -67,11 +74,19 @@ class WebServer implements Runnable
     private Socket client;
     private volatile FIFO<WheelInterface> resqueue;
     private volatile WheelInterface[] wheels;
+    private boolean debug = false;
+
     public WebServer(Socket c, FIFO<WheelInterface> resqueue, WheelInterface[] wheels)
+    {
+        this(c, resqueue, wheels, false);
+    }
+
+    public WebServer(Socket c, FIFO<WheelInterface> resqueue, WheelInterface[] wheels, boolean debug)
     {
         client = c;
         this.resqueue = resqueue;
         this.wheels = wheels;
+        this.debug = debug;
     }
 
     public void run()
@@ -82,7 +97,7 @@ class WebServer implements Runnable
         {
             String data = null;
             String clientAddress = client.getInetAddress().getHostAddress();
-            System.out.println("\r\nNew connection from " + clientAddress);
+            if(debug) System.out.println("\r\nNew connection from " + clientAddress);
 
             Form form = null;
 
@@ -96,64 +111,101 @@ class WebServer implements Runnable
             String method = parse.nextToken().toUpperCase();
             String fileRequested = parse.nextToken().toLowerCase();
             //Our file request we send to the controller to get data back from it
-            System.out.println("FileRequest: " + fileRequested);
+            if(debug) System.out.println("FileRequest: " + fileRequested);
             if (method.equals("GET"))
             {
                 out = new PrintWriter(client.getOutputStream());
-                String page = null;
-                if(fileRequested.equals("rest")){
-                    System.out.println("Supported connection, returning statistics page");
+                String page = "";
+                if(fileRequested.equals("/rest")){
+                    if(debug) System.out.println("Supported connection, returning rest page");
 
-                    page = getHTMLHeader("Carwheel production status");
-                    page += "rest";
-                    page += getHTMLFooter();
-                }
-                else{
-                    System.out.println("Supported connection, returning statistics page");
+                    page += "{\n";
 
-                    page = getHTMLHeader("Carwheel production status");
-                    page += "<h1>Production line</h1>";
-                    page += "<h1>Production Queue</h1>";
-                    page += "<p>Wheels in queue "+resqueue.size()+"</p>";
+                    page += "\t\"queue\":\n\t{\n";
+                    page += "\t\t\"items\": " + resqueue.size();
+
                     if(resqueue.size() > 0) {
-                        int[] wheelcount = new int[wheels.length];
-                        for(int i = 0; i < wheelcount.length; i++){
-                            wheelcount[i] = 0;
-                        }
-                        for(int i = 0; i < resqueue.size(); i++){
-                            WheelInterface w = resqueue.get(i);
-                            for(int j = 0; j < wheels.length; j++){
-                                if(w.getName().equals(wheels[j].getName())){
-                                    wheelcount[j]++;
-                                }
+                        page += ",\n";
+                        page += "\t\t\"wheeltypes\":\n\t\t {\n";
+                        for(int i = 0; i < wheels.length; i++){
+                            if(i+1 == wheels.length){
+                                page += "\t\t\t\"" + wheels[i].getName().replace(" ", "") + "\": \"" + wheels[i].getName() + "\"\n";
+                            }
+                            else{
+                                page += "\t\t\t\"" + wheels[i].getName().replace(" ", "") + "\": \"" + wheels[i].getName() + "\",\n";
                             }
                         }
-                        page += "<table>";
+                        page += "\t\t},\n";
+                        page += "\t\t\"wheelcount\":\n\t\t {\n";
+                        int[] wheelcount = countWheeltypesAmount();
                         for(int i = 0; i < wheelcount.length; i++){
-                            page += "<tr><td>" + wheels[i].getName() + "</td><td> " + wheelcount[i] + "</td></tr>";
+                            if(i+1 == wheelcount.length){
+                                page += "\t\t\t\"" + wheels[i].getName().replace(" ", "") + "\": " + wheelcount[i] + "\n";
+                            }
+                            else{
+                                page += "\t\t\t\"" + wheels[i].getName().replace(" ", "") + "\": " + wheelcount[i] + ",\n";
+                            }
                         }
-                        page += "</table>";
-
-                        page += "<p>Next few items are ";
+                        page += "\t\t},\n";
+                        page += "\t\t\"nextitems\": \"";
                         for (int i = 0; i < Math.min(5, resqueue.size()); i++) {
                             page += resqueue.get(i).getName();
                             if (i + 1 != Math.min(5, resqueue.size())) {
                                 page += ", ";
                             }
                         }
+                        page += "\"\n";
                     }
+                    else{
+                        page += "\n";
+                    }
+
+
+                    page += "\t}\n";
+
+                    page += "}\n";
+                }
+                else{
+                    if(debug) System.out.println("Supported connection, returning statistics page");
+
+                    page = getHTMLHeader("Carwheel production status");
+                    page += "<h1>Production line</h1>";
+                    page += "<h1>Production Queue</h1>";
+                    page += "<p>Wheels in queue <span id=\"items\">"+resqueue.size()+"</span></p>";
+                    String queueinfo_display = "none";
+                    if(resqueue.size() > 0){
+                        queueinfo_display = "block";
+                    }
+                    page += "<div id=\"queueinfo\" style='display: "+queueinfo_display+"'>";
+                    int[] wheelcount = countWheeltypesAmount();
+                    page += "<table>";
+                    for(int i = 0; i < wheelcount.length; i++){
+                        page += "<tr><td>" + wheels[i].getName() + "</td><td><span id=\""+wheels[i].getName().replace(" ", "")+"\">" + wheelcount[i] + "</td></tr>";
+                    }
+                    page += "</table>";
+
+                    page += "<p>Next few items are <span id=\"nextitems\">";
+                    for (int i = 0; i < Math.min(5, resqueue.size()); i++) {
+                        page += resqueue.get(i).getName();
+                        if (i + 1 != Math.min(5, resqueue.size())) {
+                            page += ", ";
+                        }
+                    }
+                    page += "</span>.";
+                    page += "</div>";
+
                     page += getHTMLFooter();
                 }
 
                 outData(out, page);
             }
 
-            System.out.println(input);
+            if(debug) System.out.println(input);
 
         }
         catch(Exception e)
         {
-            System.err.println("Server error : " + e);
+            if(debug) System.err.println("Server error : " + e);
         }
         finally
         {
@@ -165,11 +217,28 @@ class WebServer implements Runnable
             }
             catch(Exception e)
             {
-                System.err.println("Error closing stream : " + e.getMessage());
+                if(debug) System.err.println("Error closing stream : " + e.getMessage());
             }
         }
 
 
+    }
+
+    //Counts how many of each wheel type there is in the queue
+    private int[] countWheeltypesAmount(){
+        int[] wheelcount = new int[wheels.length];
+        for(int i = 0; i < wheelcount.length; i++){
+            wheelcount[i] = 0;
+        }
+        for(int i = 0; i < resqueue.size(); i++){
+            WheelInterface w = resqueue.get(i);
+            for(int j = 0; j < wheels.length; j++){
+                if(w.getName().equals(wheels[j].getName())){
+                    wheelcount[j]++;
+                }
+            }
+        }
+        return wheelcount;
     }
 
     private void outHeader(PrintWriter out, int length)
@@ -196,6 +265,7 @@ class WebServer implements Runnable
                 "<html xmlns='http://www.w3.org/1999/xhtml'>" +
                 "<head>" +
                 "<title>" + title + "</title>" +
+                " <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js\"></script>" +
                 "<meta charset='UTF-8' />" +
                 "</head>" +
                 "<body>");
@@ -203,6 +273,25 @@ class WebServer implements Runnable
 
     private String getHTMLFooter()
     {
-        return("</body></html>");
+        return("<script> setInterval(function(){refreshData();}, 250);" +
+                "function refreshData(){ $.ajax({ " +
+                    "method: \"GET\"," +
+                    "url: \"rest\", " +
+                    "contentType: \"JSON\" " +
+            "}).done(function(data) { " +
+                "var jsondata = JSON.parse(data);" +
+                "$('#items').html(jsondata['queue']['items']);" +
+                "if(jsondata['queue']['items'] > 0){" +
+                    "for(var k in jsondata['queue']['wheelcount']){" +
+                        //"alert(k + ' ' + jsondata['queue']['wheelcount'][k]);" +
+                        "var myid = '#' + k;" +
+                        "$(myid).html(jsondata['queue']['wheelcount'][k]);" +
+                    "}" +
+                "$('#nextitems').html(jsondata['queue']['nextitems']);" +
+                "$('#queueinfo').show();" +
+                "}" +
+                "else{ $('#queueinfo').hide(); }" +
+    "}); }" +
+                "</script></body></html>");
     }
 }

@@ -14,7 +14,7 @@ public class ProgramRoot {
 
 
         //Gives status to outside console
-        WebStatus webstatus = new WebStatus(resourcequeue, wheels);
+        WebStatus webstatus = new WebStatus(resourcequeue, wheels, false);
         webstatus.start();
 
         new CMDGUI(controllers);
