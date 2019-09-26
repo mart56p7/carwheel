@@ -7,4 +7,6 @@ public interface BeltInterface {
     void setWheel(WheelInterface newWheel);
     int getRemainingTime();
     void forceStop();
+    void setWaiting(Threadhandler bp);
+    void terminateBelt();
 }

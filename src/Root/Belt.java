@@ -62,12 +62,12 @@ public class Belt implements Runnable, BeltInterface {
         System.out.println("Interrupted");
     }
 
-    void setWaiting(BeltPool bp){
+    public void setWaiting(Threadhandler bp){
         emergency = false;
         if(bp.equals(owner)) state = BeltState.WAITING;
     }
 
-    void terminateBelt(){
+    public void terminateBelt(){
         running = false;
         forceStop();
     }

@@ -26,12 +26,14 @@ public class BeltPoolMKN implements Threadhandler{
 
     @Override
     public void startBelt(int BeltNumber) {
-
+        belts[BeltNumber].setWaiting(this);
     }
 
     @Override
     public void stopAll() {
-
+        for(int i = 0; i < belts.length; i++){
+            stopBelt(i);
+        }
     }
 
     @Override
