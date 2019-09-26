@@ -5,10 +5,10 @@ public class ProgramRoot {
     public static void main(String[] args) {
         //Mulige hjul der kan produceres
         WheelInterface[] wheels = new WheelInterface[4];
-        wheels[0] = new wheelNormal("Normal wheel", 10);
-        wheels[1] = new wheelHigh("High wheel", 12);
-        wheels[2] = new wheelWinter("Winter wheel", 14);
-        wheels[3] = new wheelWinter("Mother fucker big wheel", 200);
+        wheels[0] = new wheelNormal("Normal wheel", 10000);
+        wheels[1] = new wheelHigh("High wheel", 17000);
+        wheels[2] = new wheelWinter("Winter wheel", 14000);
+        wheels[3] = new wheelWinter("Mother fucker big wheel", 200000);
         //Vores kø hvor de forskellige hjul opbevares indtil de bliver produceret
         FIFO<WheelInterface> resourcequeue = new FIFO();
         //Vores Controller til vores cmd interface

@@ -150,11 +150,36 @@ public class CarWheelController implements ControllerInterface {
 
 
     private Page get_stop(){
-        return null;
+        Belt[] belts = service.getPool().getBelts();
+        String[] beltinfo = new String[belts.length];
+        for(int i = 0; i < belts.length; i++){
+            beltinfo[i] = i + ": " + belts[i].getName() + ", current state: " + belts[i].getState();
+        }
+        Question[] q = new Question[1];
+        q[0] = new Question("Select belt to stop, or to wait for orders if INTERRUPTED");
+        return new Page(menuItems, beltinfo, new Form(q, location + "post_startstop"));
     }
 
     private String[] post_stop(Form form){
-        return null;
+        String[] rstr = new String[1];
+        rstr[0] = "An error occured";
+        Question[] q = form.getQuestions();
+        if(q.length == 1){
+            try{
+                int beltnumber = Integer.parseInt(q[0].getAnswer());
+                Belt belt = service.getPool().getBelts()[beltnumber];
+                if(belt.getState() != BeltState.INTERRUPTED){
+                    service.getPool().stopBelt(beltnumber);
+                    rstr[0] = "Forcing " + belt.getName() + " to stop.";
+                } else {
+                    service.getPool().startBelt(beltnumber);
+                    rstr[0] = "Setting " + belt.getName() + " to wait for orders.";
+                }
+            }catch(Exception e){
+                rstr[0] = "An error occured";
+            }
+        }
+        return rstr;
     }
 
 
