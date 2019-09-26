@@ -150,7 +150,7 @@ public class CarWheelController implements ControllerInterface {
 
 
     private Page get_stop(){
-        Belt[] belts = service.getPool().getBelts();
+        Belt[] belts = service.getBelts();
         String[] beltinfo = new String[belts.length];
         for(int i = 0; i < belts.length; i++){
             beltinfo[i] = i + ": " + belts[i].getName() + ", current state: " + belts[i].getState();
@@ -167,12 +167,12 @@ public class CarWheelController implements ControllerInterface {
         if(q.length == 1){
             try{
                 int beltnumber = Integer.parseInt(q[0].getAnswer());
-                Belt belt = service.getPool().getBelts()[beltnumber];
+                Belt belt = service.getBelts()[beltnumber];
                 if(belt.getState() != BeltState.INTERRUPTED){
-                    service.getPool().stopBelt(beltnumber);
+                    service.stopBelt(beltnumber);
                     rstr[0] = "Forcing " + belt.getName() + " to stop.";
                 } else {
-                    service.getPool().startBelt(beltnumber);
+                    service.startBelt(beltnumber);
                     rstr[0] = "Setting " + belt.getName() + " to wait for orders.";
                 }
             }catch(Exception e){

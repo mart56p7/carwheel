@@ -4,11 +4,13 @@ public class Belt implements Runnable {
 
     private String name;
     private int runs = 0;
-    private BeltState state = BeltState.WAITING;
     private boolean emergency = false;
+    private int elapsedTime = 0;
+    private boolean running = true;
+
+    private BeltState state = BeltState.WAITING;
     private WheelInterface wheel;
     private BeltPool owner;
-    private int elapsedTime = 0;
 
     public Belt (String name, WheelInterface wheel, BeltPool owner){
         this.name = name;
@@ -18,7 +20,7 @@ public class Belt implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             if(!emergency) {
                 elapsedTime = 0;
                 if (wheel != null) {
@@ -53,7 +55,7 @@ public class Belt implements Runnable {
     }
 
 
-    public void forceStop(){
+    void forceStop(){
         emergency = true;
         state = BeltState.INTERRUPTED;
     }
@@ -61,6 +63,10 @@ public class Belt implements Runnable {
     void setWaiting(BeltPool bp){
         emergency = false;
         if(bp == owner) state = BeltState.WAITING;
+    }
+
+    void terminateBelt(){
+        running = false;
     }
 
 

@@ -5,15 +5,14 @@ public class CarWheelService {
     volatile FIFO<WheelInterface> resourcequeue = null;
     WheelInterface[] wheels = null;
 
-    private BeltPool pool;
+    private Threadhandler pool;
     private Thread poolThread;
 
-    public CarWheelService(FIFO<WheelInterface> resourcequeue, WheelInterface[] wheels){
+    public CarWheelService(FIFO<WheelInterface> resourcequeue, WheelInterface[] wheels, Threadhandler pool){
         this.resourcequeue = resourcequeue;
         this.wheels = wheels;
 
-        pool = new BeltPool(resourcequeue, 4);
-        poolThread = new Thread(pool);
+        poolThread = new Thread((Runnable)pool);
         poolThread.start();
     }
 
@@ -39,12 +38,16 @@ public class CarWheelService {
         return rstr;
     }
 
-    public void stop(){
-
+    public Belt[] getBelts (){
+        return pool.getBelts();
     }
 
-    BeltPool getPool(){
-        return pool;
+    public void startBelt(int Beltnumber){
+        pool.startBelt(Beltnumber);
+    }
+
+    public void stopBelt(int Beltnumber){
+        pool.stopBelt(Beltnumber);
     }
 
     public WheelInterface[] getWheels(){
