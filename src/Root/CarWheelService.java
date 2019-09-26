@@ -35,7 +35,7 @@ public class CarWheelService {
         return rstr;
     }
 
-    public Belt[] getBelts (){
+    public BeltInterface[] getBelts (){
         return pool.getBelts();
     }
 

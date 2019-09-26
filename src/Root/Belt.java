@@ -1,6 +1,6 @@
 package Root;
 
-public class Belt implements Runnable {
+public class Belt implements Runnable, BeltInterface {
 
     private String name;
     private int runs = 0;
@@ -56,7 +56,7 @@ public class Belt implements Runnable {
     }
 
 
-    void forceStop(){
+    public void forceStop(){
         emergency = true;
         state = BeltState.INTERRUPTED;
         System.out.println("Interrupted");
@@ -110,6 +110,4 @@ public class Belt implements Runnable {
     }
 }
 
-enum BeltState {
-    WAITING, PREPARING, RUNNING, CLEANING, INTERRUPTED
-}
+

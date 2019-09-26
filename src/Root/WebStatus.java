@@ -118,7 +118,7 @@ class WebServer implements Runnable
             if (method.equals("GET"))
             {
                 out = new PrintWriter(client.getOutputStream());
-                Belt[] belts = pool.getBelts();
+                BeltInterface[] belts = pool.getBelts();
 
                 String page = "";
                 if(fileRequested.equals("/rest")){
@@ -261,7 +261,7 @@ class WebServer implements Runnable
 
     }
 
-    private String getBeltState(Belt belt){
+    private String getBeltState(BeltInterface belt){
         String state = "";
         if(belt.getState() == BeltState.WAITING) state = "Waiting";
         if(belt.getState() == BeltState.CLEANING) state = "Cleaning";
@@ -271,7 +271,7 @@ class WebServer implements Runnable
         return state;
     }
 
-    private String getBeltProgress(Belt belt){
+    private String getBeltProgress(BeltInterface belt){
         String progress = "";
         if(belt.getState() == BeltState.WAITING) progress = "0";
         if(belt.getState() == BeltState.CLEANING) progress = "0";
