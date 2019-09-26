@@ -28,6 +28,7 @@ public class Belt implements Runnable {
                         //Preparation
                         routine(2000, BeltState.PREPARING);
                         //Run
+                        elapsedTime = 0;
                         routine(wheel.getProductionTime(), BeltState.RUNNING);
                         runs++;
                         //Cleaning Process
@@ -58,11 +59,12 @@ public class Belt implements Runnable {
     void forceStop(){
         emergency = true;
         state = BeltState.INTERRUPTED;
+        System.out.println("Interrupted");
     }
 
     void setWaiting(BeltPool bp){
         emergency = false;
-        if(bp == owner) state = BeltState.WAITING;
+        if(bp.equals(owner)) state = BeltState.WAITING;
     }
 
     void terminateBelt(){

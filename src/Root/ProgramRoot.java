@@ -13,12 +13,15 @@ public class ProgramRoot {
         FIFO<WheelInterface> resourcequeue = new FIFO();
         //Opretter en BeltPool til vores service
         Threadhandler pool = new BeltPool(resourcequeue, 4);
+        Thread threadpool = new Thread(pool);
+        threadpool.start();
+
         //Vores Controller til vores cmd interface
         ControllerInterface[] controllers = new ControllerInterface[1];
         controllers[0] = new CarWheelController(new CarWheelService(resourcequeue, wheels, pool));
 
         //Gives status over køen og hvad der bliver produceret pt. Implementeret som en simpel webserver
-        WebStatus webstatus = new WebStatus(resourcequeue, wheels, false);
+        WebStatus webstatus = new WebStatus(resourcequeue, wheels, pool, false);
         webstatus.start();
 
         //Command line interface til at styre produktion

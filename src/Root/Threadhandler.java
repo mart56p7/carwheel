@@ -1,6 +1,6 @@
 package Root;
 
-public interface Threadhandler {
+public interface Threadhandler extends Runnable {
 
     Belt[] getBelts();
     void stopBelt(int BeltNumber);

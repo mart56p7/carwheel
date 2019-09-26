@@ -6,14 +6,11 @@ public class CarWheelService {
     WheelInterface[] wheels = null;
 
     private Threadhandler pool;
-    private Thread poolThread;
 
     public CarWheelService(FIFO<WheelInterface> resourcequeue, WheelInterface[] wheels, Threadhandler pool){
         this.resourcequeue = resourcequeue;
         this.wheels = wheels;
-
-        poolThread = new Thread((Runnable)pool);
-        poolThread.start();
+        this.pool = pool;
     }
 
     public void add(WheelInterface wheel, int numwheels){

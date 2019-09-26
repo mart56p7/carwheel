@@ -14,15 +14,16 @@ public class  WebStatus extends Thread{
     private volatile WheelInterface[] wheels;
     ServerSocket serverConnect;
     private boolean debug = false;
-
-    public WebStatus(FIFO<WheelInterface> resqueue, WheelInterface[] wheels) {
-        this(resqueue, wheels, false);
+    Threadhandler pool;
+    public WebStatus(FIFO<WheelInterface> resqueue, WheelInterface[] wheels, Threadhandler pool) {
+        this(resqueue, wheels, pool, false);
     }
 
-    public WebStatus(FIFO<WheelInterface> resqueue, WheelInterface[] wheels, boolean debug){
+    public WebStatus(FIFO<WheelInterface> resqueue, WheelInterface[] wheels, Threadhandler pool, boolean debug){
         this.resqueue = resqueue;
         this.wheels = wheels;
         this.debug = debug;
+        this.pool = pool;
         //We listen on port 80 (normal webserver port)
         try
         {
@@ -40,7 +41,7 @@ public class  WebStatus extends Thread{
             //When we get a new connection we create a new Socket to talk to the client. and create an object of the type MyServerSocket
             try
             {
-                WebServer myServer = new WebServer(serverConnect.accept(), resqueue, wheels);
+                WebServer myServer = new WebServer(serverConnect.accept(), resqueue, wheels, pool, debug);
                 if(debug) System.out.println("Connecton opened. (" + new Date() + ")");
                 // create a dedicated thread to manage the client connection
                 Thread thread = new Thread(myServer);
@@ -75,18 +76,20 @@ class WebServer implements Runnable
     private volatile FIFO<WheelInterface> resqueue;
     private volatile WheelInterface[] wheels;
     private boolean debug = false;
+    Threadhandler pool = null;
 
-    public WebServer(Socket c, FIFO<WheelInterface> resqueue, WheelInterface[] wheels)
+    public WebServer(Socket c, FIFO<WheelInterface> resqueue, WheelInterface[] wheels, Threadhandler pool)
     {
-        this(c, resqueue, wheels, false);
+        this(c, resqueue, wheels, pool, false);
     }
 
-    public WebServer(Socket c, FIFO<WheelInterface> resqueue, WheelInterface[] wheels, boolean debug)
+    public WebServer(Socket c, FIFO<WheelInterface> resqueue, WheelInterface[] wheels, Threadhandler pool, boolean debug)
     {
         client = c;
         this.resqueue = resqueue;
         this.wheels = wheels;
         this.debug = debug;
+        this.pool = pool;
     }
 
     public void run()
@@ -115,6 +118,8 @@ class WebServer implements Runnable
             if (method.equals("GET"))
             {
                 out = new PrintWriter(client.getOutputStream());
+                Belt[] belts = pool.getBelts();
+
                 String page = "";
                 if(fileRequested.equals("/rest")){
                     if(debug) System.out.println("Supported connection, returning rest page");
@@ -122,10 +127,9 @@ class WebServer implements Runnable
                     page += "{\n";
 
                     page += "\t\"queue\":\n\t{\n";
-                    page += "\t\t\"items\": " + resqueue.size();
-
+                    page += "\t\t\"items\": " + resqueue.size() + ",\n";
                     if(resqueue.size() > 0) {
-                        page += ",\n";
+
                         page += "\t\t\"wheeltypes\":\n\t\t {\n";
                         for(int i = 0; i < wheels.length; i++){
                             if(i+1 == wheels.length){
@@ -154,12 +158,34 @@ class WebServer implements Runnable
                                 page += ", ";
                             }
                         }
-                        page += "\"\n";
-                    }
-                    else{
-                        page += "\n";
+                        page += "\",\n";
                     }
 
+
+                    page += "\t\t\"beltprogress\":\n\t\t{\n";
+                    for(int i = 0; i < belts.length; i++){
+                        page += "\t\t\t\"" + belts[i].getName().replace(" ", "")+"\":\"" + getBeltProgress(belts[i]) + "\"";
+                        if(i + 1 != belts.length){
+                            page += ",\n";
+                        }
+                        else{
+                            page += "\n";
+                        }
+                    }
+                    page += "\t\t},\n";
+
+                    page += "\t\t\"beltstate\":\n\t\t{\n";
+                    for(int i = 0; i < belts.length; i++){
+                        String progress = getBeltProgress(belts[i]);
+                        page += "\t\t\t\"" + belts[i].getName().replace(" ", "")+"\":\"" + getBeltState(belts[i]) + "\"";
+                        if(i + 1 != belts.length){
+                            page += ",\n";
+                        }
+                        else{
+                            page += "\n";
+                        }
+                    }
+                    page += "\t\t}\n";
 
                     page += "\t}\n";
 
@@ -170,6 +196,17 @@ class WebServer implements Runnable
 
                     page = getHTMLHeader("Carwheel production status");
                     page += "<h1>Production line</h1>";
+                    if(debug) System.out.println("Supported connection, returning statistics page");
+
+                    page += "<div>";
+                    for(int i = 0; i < belts.length; i++){
+                        page += "<div style='display: inline-block; border: 1px solid black; margin: 20px; width: 200px;'>"+
+                                "<div style='width: 100%; border-bottom: 1px solid black; background: silver;'>Name: "+belts[i].getName()+"</div>" +
+                                "<div style='width: 100%; border-bottom: 1px solid black; background: lightgrey' id='"+belts[i].getName().replace(" ", "")+"-state'>Loading..</div>" +
+                                "<div style='height: 150px; text-align: center; padding: 50px;' id='"+belts[i].getName().replace(" ", "")+"-progress'>Loading..</div>" +
+                                "</div>";
+                    }
+                    page += "</div>";
                     page += "<h1>Production Queue</h1>";
                     page += "<p>Wheels in queue <span id=\"items\">"+resqueue.size()+"</span></p>";
                     String queueinfo_display = "none";
@@ -180,7 +217,7 @@ class WebServer implements Runnable
                     int[] wheelcount = countWheeltypesAmount();
                     page += "<table>";
                     for(int i = 0; i < wheelcount.length; i++){
-                        page += "<tr><td>" + wheels[i].getName() + "</td><td><span id=\""+wheels[i].getName().replace(" ", "")+"\">" + wheelcount[i] + "</td></tr>";
+                        page += "<tr><td>" + wheels[i].getName() + "</td><td><span id=\""+wheels[i].getName().replace(" ", "")+"\">" + wheelcount[i] + "</span></td></tr>";
                     }
                     page += "</table>";
 
@@ -222,6 +259,26 @@ class WebServer implements Runnable
         }
 
 
+    }
+
+    private String getBeltState(Belt belt){
+        String state = "";
+        if(belt.getState() == BeltState.WAITING) state = "Waiting";
+        if(belt.getState() == BeltState.CLEANING) state = "Cleaning";
+        if(belt.getState() == BeltState.PREPARING) state = "Preparing";
+        if(belt.getState() == BeltState.RUNNING) state = "Running";
+        if(belt.getState() == BeltState.INTERRUPTED) state = "Interrupted";
+        return state;
+    }
+
+    private String getBeltProgress(Belt belt){
+        String progress = "";
+        if(belt.getState() == BeltState.WAITING) progress = "0";
+        if(belt.getState() == BeltState.CLEANING) progress = "0";
+        if(belt.getState() == BeltState.INTERRUPTED) progress = "0";
+        if(belt.getState() == BeltState.PREPARING) progress = ""+ Math.round(100 * (((float)belt.getWheel().getProductionTime()-(float)belt.getRemainingTime()) / (float)2000));
+        if(belt.getState() == BeltState.RUNNING) progress = ""+ Math.round(((((float)belt.getWheel().getProductionTime())-(float)belt.getRemainingTime())/((float)belt.getWheel().getProductionTime())) * 100);
+        return progress;
     }
 
     //Counts how many of each wheel type there is in the queue
@@ -280,10 +337,28 @@ class WebServer implements Runnable
                     "contentType: \"JSON\" " +
             "}).done(function(data) { " +
                 "var jsondata = JSON.parse(data);" +
+                "for(var k in jsondata['queue']['beltprogress']){" +
+                    "var myid = '#' + k + '-progress';" +
+                    "var progress = jsondata['queue']['beltprogress'][k]; " +
+                    "var missingprogress = 100 - progress; " +
+                    "if(jsondata['queue']['beltprogress'][k] == 0){" +
+                        "$(myid).html('');" +
+                    "} else {" +
+                        "$(myid).html(jsondata['queue']['beltprogress'][k] + '%');" +
+                    "}" +
+                    "if(jsondata['queue']['beltstate'][k] == 'Interrupted'){" +
+                        "$(myid).css({'background':'linear-gradient(to bottom, #ff0000 0%, #ff0000 100%)'});" +
+                    "}else { " +
+                        "$(myid).css({'background':'linear-gradient(to bottom, #ffffff '+missingprogress+'%, #00ff00 '+progress+'%)'});" +
+                    "}" +
+                "}" +
+                "for(var k in jsondata['queue']['beltstate']){" +
+                    "var myid = '#' + k + '-state';" +
+                    "$(myid).html('Status: ' + jsondata['queue']['beltstate'][k]);" +
+                "}" +
                 "$('#items').html(jsondata['queue']['items']);" +
                 "if(jsondata['queue']['items'] > 0){" +
                     "for(var k in jsondata['queue']['wheelcount']){" +
-                        //"alert(k + ' ' + jsondata['queue']['wheelcount'][k]);" +
                         "var myid = '#' + k;" +
                         "$(myid).html(jsondata['queue']['wheelcount'][k]);" +
                     "}" +
