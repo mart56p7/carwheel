@@ -24,6 +24,8 @@ public class ProgramRoot {
         //Command line interface til at styre produktion
         new CMDGUI(controllers);
 
+        pool.stopAll();
+
         //When CMDGUI ends we terminate our WebStatus thread.
         webstatus.close();
     }

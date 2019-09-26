@@ -50,16 +50,17 @@ public class BeltPool implements Runnable, Threadhandler{
         signalDone(belts[BeltNumber]);
     }
 
-    public void stopAll(){
+    synchronized public void stopAll(){
         for (Belt b : belts){
             b.terminateBelt();
         }
+        running = false;
     }
 
     @Override
     public void run() {
         while (running) {
-            while (resourcequeue.peek() != null) {
+            if (resourcequeue.peek() != null) {
                 for (int i = 0; i < waitingBelts.length; i++) {
                     if (waitingBelts[i] != null) {
                         waitingBelts[i].setWheel(resourcequeue.pop());

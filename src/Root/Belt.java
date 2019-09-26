@@ -67,6 +67,7 @@ public class Belt implements Runnable {
 
     void terminateBelt(){
         running = false;
+        forceStop();
     }
 
 
