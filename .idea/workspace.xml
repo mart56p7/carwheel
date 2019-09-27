@@ -2,10 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c9e5af43-aa94-4212-b711-9d721a0ad4f4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Root/BeltMKN.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Root/BeltMKN.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Root/BeltPoolMKN.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Root/BeltPoolMKN.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Root/FIFO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Root/FIFO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Root/ProgramRoot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Root/ProgramRoot.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -35,8 +31,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Root/ProgramRoot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="54" selection-start-line="6" selection-start-column="54" selection-end-line="6" selection-end-column="54" />
+            <state relative-caret-position="272">
+              <caret line="16" column="10" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/Root/BeltSemaphoreMKN.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -81,10 +86,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Root/BeltMKN.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
+            <state relative-caret-position="170">
               <caret line="97" column="17" selection-start-line="97" selection-start-column="17" selection-end-line="97" selection-end-column="17" />
               <folding>
                 <element signature="e#509#510#0" expanded="true" />
@@ -97,18 +102,6 @@
                 <element signature="e#827#828#0" expanded="true" />
                 <element signature="e#764#765#0" expanded="true" />
                 <element signature="e#795#796#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Root/wheelNormal.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="23" selection-start-line="23" selection-end-line="23" />
-              <folding>
-                <element signature="method#wheelNormal#0;class#wheelNormal#0" />
               </folding>
             </state>
           </provider>
@@ -179,8 +172,8 @@
         <option value="$PROJECT_DIR$/src/Root/Belt.java" />
         <option value="$PROJECT_DIR$/src/Root/FIFO.java" />
         <option value="$PROJECT_DIR$/src/Root/BeltPoolMKN.java" />
-        <option value="$PROJECT_DIR$/src/Root/ProgramRoot.java" />
         <option value="$PROJECT_DIR$/src/Root/BeltMKN.java" />
+        <option value="$PROJECT_DIR$/src/Root/ProgramRoot.java" />
       </list>
     </option>
   </component>
@@ -308,7 +301,7 @@
       <updated>1569340231369</updated>
       <workItem from="1569340233949" duration="2889000" />
       <workItem from="1569506117254" duration="12056000" />
-      <workItem from="1569578208816" duration="8371000" />
+      <workItem from="1569578208816" duration="8553000" />
     </task>
     <task id="LOCAL-00001" summary="Belt">
       <created>1569496430728</created>
@@ -335,7 +328,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="29116000" />
+    <option name="totallyTimeSpent" value="29298000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
@@ -575,13 +568,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Root/ProgramRoot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="54" selection-start-line="6" selection-start-column="54" selection-end-line="6" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Root/WebStatus.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2231">
@@ -591,7 +577,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Root/BeltMKN.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
+        <state relative-caret-position="170">
           <caret line="97" column="17" selection-start-line="97" selection-start-column="17" selection-end-line="97" selection-end-column="17" />
           <folding>
             <element signature="e#509#510#0" expanded="true" />
@@ -605,6 +591,20 @@
             <element signature="e#764#765#0" expanded="true" />
             <element signature="e#795#796#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Root/ProgramRoot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="10" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Root/BeltSemaphoreMKN.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
         </state>
       </provider>
     </entry>

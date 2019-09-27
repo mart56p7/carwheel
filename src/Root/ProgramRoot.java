@@ -13,7 +13,9 @@ public class ProgramRoot {
         //Vores kø hvor de forskellige hjul opbevares indtil de bliver produceret
         FIFO<WheelInterface> resourcequeue = new FIFO();
         //Opretter en BeltPool til vores service
-        Threadhandler pool = new BeltPoolMKN(resourcequeue, 4);
+        Threadhandler pool;
+        //pool = new BeltPoolMKN(resourcequeue, 4);
+        pool = new BeltPool(resourcequeue, 4);
         Thread threadpool = new Thread(pool);
         threadpool.start();
 
