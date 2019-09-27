@@ -1,14 +1,23 @@
 package Root;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // FIFO (First In First Out) Queue
 public class FIFO <E> implements DanMethods <E>{
    LinkedChildElement first = null;
    LinkedChildElement last = null;
+   List<FIFOObserver> observers = new ArrayList<FIFOObserver>();
+
+
    @SuppressWarnings("unchecked")
    public void push(E e){
       if(first == null){
          last = new LinkedChildElement(e);
          first = last;
+         for(FIFOObserver observer : observers){
+            observer.FIFONotEmpty();
+         }
       }
       else{
          last = last.add(e);
@@ -49,6 +58,10 @@ public class FIFO <E> implements DanMethods <E>{
          return null;
       }
       return (E) first.get(i);
+   }
+
+   public void attach(FIFOObserver observer){
+      observers.add(observer);
    }
 }
 
@@ -108,4 +121,8 @@ interface DanMethods <E> {
    E peek();
    int size();
    void grow();
+}
+
+interface FIFOObserver{
+   void FIFONotEmpty();
 }

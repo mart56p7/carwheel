@@ -4,15 +4,16 @@ public class ProgramRoot {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
         //Mulige hjul der kan produceres
-        WheelInterface[] wheels = new WheelInterface[4];
+        WheelInterface[] wheels = new WheelInterface[5];
         wheels[0] = new wheelNormal("Normal wheel", 10000);
         wheels[1] = new wheelHigh("High wheel", 17000);
         wheels[2] = new wheelWinter("Winter wheel", 14000);
         wheels[3] = new wheelWinter("Mother fucker big wheel", 200000);
+        wheels[4] = new wheelWinter("Fast wheel", 100);
         //Vores kø hvor de forskellige hjul opbevares indtil de bliver produceret
         FIFO<WheelInterface> resourcequeue = new FIFO();
         //Opretter en BeltPool til vores service
-        Threadhandler pool = new BeltPool(resourcequeue, 4);
+        Threadhandler pool = new BeltPoolMKN(resourcequeue, 4);
         Thread threadpool = new Thread(pool);
         threadpool.start();
 
@@ -31,5 +32,8 @@ public class ProgramRoot {
 
         //When CMDGUI ends we terminate our WebStatus thread.
         webstatus.close();
+
+        //We let the Java/OS handle any Threads we have forgotten to close.
+        System.exit(0);
     }
 }
