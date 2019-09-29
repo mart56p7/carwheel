@@ -1,14 +1,16 @@
 package Root;
 
-public class Belt implements Runnable {
+public class Belt implements Runnable, BeltInterface {
 
     private String name;
     private int runs = 0;
-    private BeltState state = BeltState.WAITING;
     private boolean emergency = false;
+    private int elapsedTime = 0;
+    private boolean running = true;
+
+    private BeltState state = BeltState.WAITING;
     private WheelInterface wheel;
     private BeltPool owner;
-    private int elapsedTime = 0;
 
     public Belt (String name, WheelInterface wheel, BeltPool owner){
         this.name = name;
@@ -18,7 +20,7 @@ public class Belt implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             if(!emergency) {
                 elapsedTime = 0;
                 if (wheel != null) {
@@ -26,6 +28,7 @@ public class Belt implements Runnable {
                         //Preparation
                         routine(2000, BeltState.PREPARING);
                         //Run
+                        elapsedTime = 0;
                         routine(wheel.getProductionTime(), BeltState.RUNNING);
                         runs++;
                         //Cleaning Process
@@ -56,11 +59,17 @@ public class Belt implements Runnable {
     public void forceStop(){
         emergency = true;
         state = BeltState.INTERRUPTED;
+        System.out.println("Interrupted");
     }
 
-    void setWaiting(BeltPool bp){
+    public void setWaiting(Threadhandler bp){
         emergency = false;
-        if(bp == owner) state = BeltState.WAITING;
+        if(bp.equals(owner)) state = BeltState.WAITING;
+    }
+
+    public void terminateBelt(){
+        running = false;
+        forceStop();
     }
 
 
@@ -101,6 +110,4 @@ public class Belt implements Runnable {
     }
 }
 
-enum BeltState {
-    WAITING, PREPARING, RUNNING, CLEANING, INTERRUPTED
-}
+

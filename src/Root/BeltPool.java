@@ -1,10 +1,11 @@
 package Root;
 
-public class BeltPool implements Runnable {
+public class BeltPool implements Threadhandler{
 
     private Belt[] belts;
     private Thread[] beltThreads;
     private Belt[] waitingBelts;
+    private boolean running = true;
 
     private volatile FIFO<WheelInterface> resourcequeue = null;
 
@@ -25,7 +26,7 @@ public class BeltPool implements Runnable {
         for(int i = 0; i < waitingBelts.length; i++){
             if(waitingBelts[i] == null){
                 waitingBelts[i] = belt;
-//                System.out.println(belt.getName() + " finished wheel");
+                notify();
                 return true;
             }
         }
@@ -50,23 +51,33 @@ public class BeltPool implements Runnable {
         signalDone(belts[BeltNumber]);
     }
 
-    public void stopAll(){
+    synchronized public void stopAll(){
         for (Belt b : belts){
-            b.forceStop();
+            b.terminateBelt();
         }
+        running = false;
     }
 
     @Override
     public void run() {
-        while (true) {
-            while (resourcequeue.peek() != null) {
+        while (running) {
+            if (resourcequeue.peek() != null) {
                 for (int i = 0; i < waitingBelts.length; i++) {
                     if (waitingBelts[i] != null) {
                         waitingBelts[i].setWheel(resourcequeue.pop());
                         waitingBelts[i] = null;
                     }
                 }
+            } else {
+                try {
+                    synchronized (this) {
+                        wait(1000);
+                    }
+                } catch (InterruptedException e) {
+
+                }
             }
+
         }
     }
 }
