@@ -1,6 +1,6 @@
 package Root;
 
-public class Belt implements Runnable {
+public class Belt implements Runnable, BeltInterface {
 
     private String name;
     private int runs = 0;
@@ -55,17 +55,18 @@ public class Belt implements Runnable {
     }
 
 
-    void forceStop(){
+    public void forceStop(){
         emergency = true;
         state = BeltState.INTERRUPTED;
+        System.out.println("Interrupted");
     }
 
-    void setWaiting(BeltPool bp){
+    public void setWaiting(Threadhandler bp){
         emergency = false;
-        if(bp == owner) state = BeltState.WAITING;
+        if(bp.equals(owner)) state = BeltState.WAITING;
     }
 
-    void terminateBelt(){
+    public void terminateBelt(){
         running = false;
         forceStop();
     }
@@ -111,6 +112,4 @@ public class Belt implements Runnable {
     }
 }
 
-enum BeltState {
-    WAITING, PREPARING, RUNNING, CLEANING, INTERRUPTED
-}
+
