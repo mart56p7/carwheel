@@ -1,10 +1,10 @@
 package Root;
 
-public class wheelHigh implements WheelInterface {
+public class defaultWheel implements WheelInterface {
     private String name;
     private int productiontime;
 
-    public wheelHigh(String name, int productiontime){
+    public defaultWheel(String name, int productiontime){
         this.name = name;
         this.productiontime = productiontime;
     }
