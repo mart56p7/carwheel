@@ -12,6 +12,7 @@ public class CarWheelService {
         this.resourcequeue = resourcequeue;
         this.wheels = wheels;
 
+        this.pool = pool;
         poolThread = new Thread((Runnable)pool);
         poolThread.start();
     }

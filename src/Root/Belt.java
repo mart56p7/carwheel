@@ -22,12 +22,12 @@ public class Belt implements Runnable {
     public void run() {
         while (running) {
             if(!emergency) {
-                elapsedTime = 0;
                 if (wheel != null) {
                     try {
                         //Preparation
                         routine(2000, BeltState.PREPARING);
                         //Run
+                        elapsedTime = 0;
                         routine(wheel.getProductionTime(), BeltState.RUNNING);
                         runs++;
                         //Cleaning Process
@@ -88,7 +88,10 @@ public class Belt implements Runnable {
     }
 
     public int getRemainingTime(){
-        return wheel.getProductionTime() - elapsedTime;
+        if(state == BeltState.RUNNING){
+            return wheel.getProductionTime() - elapsedTime;
+        }
+        return 0;
     }
 
 
