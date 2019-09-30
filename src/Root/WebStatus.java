@@ -276,7 +276,7 @@ class WebServer implements Runnable
         if(belt.getState() == BeltState.WAITING) progress = "0";
         if(belt.getState() == BeltState.CLEANING) progress = "0";
         if(belt.getState() == BeltState.INTERRUPTED) progress = "0";
-        if(belt.getState() == BeltState.PREPARING) progress = ""+ Math.round(100 * (((float)belt.getWheel().getProductionTime()-(float)belt.getRemainingTime()) / (float)2000));
+        if(belt.getState() == BeltState.PREPARING) progress = ""+ Math.round(100 * ((2000 - (float)belt.getRemainingTime()) / (float)2000));
         if(belt.getState() == BeltState.RUNNING) progress = ""+ Math.round(((((float)belt.getWheel().getProductionTime())-(float)belt.getRemainingTime())/((float)belt.getWheel().getProductionTime())) * 100);
         return progress;
     }

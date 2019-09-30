@@ -67,6 +67,7 @@ public class BeltMKN implements BeltInterface, Runnable{
     @Override
     public void run() {
         synchronized (this) {
+            // The thread is saved, so we can interrupt it
             runner = Thread.currentThread();
             try {
                 if(debug) System.out.println("Working " + Thread.currentThread().getName() + " " + name);
