@@ -1,6 +1,6 @@
 package Root;
 
-public class BeltPool implements Threadhandler{
+public class BeltPool implements Threadhandler {
 
     private Belt[] belts;
     private Thread[] beltThreads;

@@ -22,7 +22,6 @@ public class Belt implements Runnable, BeltInterface {
     public void run() {
         while (running) {
             if(!emergency) {
-                elapsedTime = 0;
                 if (wheel != null) {
                     try {
                         //Preparation
@@ -39,14 +38,12 @@ public class Belt implements Runnable, BeltInterface {
                         wheel = null;
                         owner.signalDone(this);
                     } catch (InterruptedException e) {
-//                    System.out.println("An error has occured at " + name);
                         state = BeltState.INTERRUPTED;
                     }
                 }
                 try {
                     routine(100, BeltState.WAITING);
                 } catch (Exception e) {
-//                System.out.println("An error has occured at " + name);
                     state = BeltState.INTERRUPTED;
                 }
             } else {
@@ -59,12 +56,13 @@ public class Belt implements Runnable, BeltInterface {
     public void forceStop(){
         emergency = true;
         state = BeltState.INTERRUPTED;
-        System.out.println("Interrupted");
     }
 
     public void setWaiting(Threadhandler bp){
-        emergency = false;
-        if(bp.equals(owner)) state = BeltState.WAITING;
+        if(bp.equals(owner)) {
+            state = BeltState.WAITING;
+            emergency = false;
+        }
     }
 
     public void terminateBelt(){
@@ -90,7 +88,9 @@ public class Belt implements Runnable, BeltInterface {
     }
 
     public int getRemainingTime(){
-        return wheel.getProductionTime() - elapsedTime;
+        if(state == BeltState.RUNNING) return wheel.getProductionTime() - elapsedTime;
+        if(wheel != null) return wheel.getProductionTime();
+        return 0;
     }
 
 
