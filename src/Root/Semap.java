@@ -87,10 +87,10 @@ public class Semap implements Threadhandler,FIFOObserver {
                                 executor.execute(belts[i]);
                                 nextitem = null;
                                 break;
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } finally {
-                                sem.release(1);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    sem.release(1);
                                 }
                             }
                         }

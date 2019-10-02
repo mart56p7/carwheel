@@ -3,14 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="c9e5af43-aa94-4212-b711-9d721a0ad4f4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/carwheel/META-INF/carwheel.kotlin_module" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/carwheel/META-INF/carwheel.kotlin_module" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/carwheel/Root/CMDGUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/carwheel/Root/CMDGUI.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Damn fast wheels.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/Damn fast wheels.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/carwheel/Root/BeltMKN.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/carwheel/Root/BeltMKN.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/carwheel/Root/ProgramRoot.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/carwheel/Root/ProgramRoot.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/carwheel/Root/StatusMessager.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/carwheel/Root/StatusMessager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/carwheel/Root/WebServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/carwheel/Root/WebServer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Root/BeltMKN.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Root/BeltMKN.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/carwheel/Root/StatusMessager.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Root/ProgramRoot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Root/ProgramRoot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Root/WebStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Root/WebStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Root/Semap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Root/Semap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Root/StatusMessager.java" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -119,7 +118,9 @@
       <workItem from="1569503536040" duration="26000" />
       <workItem from="1569583355034" duration="763000" />
       <workItem from="1569825206408" duration="6538000" />
-      <workItem from="1569883832766" duration="2676000" />
+      <workItem from="1569883832766" duration="3390000" />
+      <workItem from="1569939303732" duration="187000" />
+      <workItem from="1570053615722" duration="2288000" />
     </task>
     <task id="LOCAL-00001" summary="Belt">
       <created>1569496430728</created>
@@ -167,7 +168,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

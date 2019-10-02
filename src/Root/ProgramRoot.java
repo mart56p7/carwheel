@@ -14,8 +14,9 @@ public class ProgramRoot {
         FIFO<WheelInterface> resourcequeue = new FIFO();
         //Opretter en BeltPool til vores service
         Threadhandler pool;
-        pool = new BeltPoolMKN(resourcequeue, 4);
+        //pool = new BeltPoolMKN(resourcequeue, 4);
         //pool = new BeltPool(resourcequeue, 4);
+        pool = new Semap(resourcequeue, 4);
         Thread threadpool = new Thread(pool);
         threadpool.start();
 
